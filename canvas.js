@@ -7,43 +7,19 @@ let yoff = 60;
 let xoff = 45;
 let bricks = [];
 let gap = 10;
-//Draw the ball
-const ball = {
-  x: canvas.width / 2,
-  y: canvas.height / 2,
-  r: 10,
-  speed: 4,
-  dx: 4,
-  dy: -4,
-};
-function drawBall() {
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
-  ctx.fillStyle = "#0095dd";
-  ctx.fill();
-  ctx.closePath();
-}
+let life = 3;
 
-const paddle = {
-  x: canvas.width / 2 - 40,
-  y: canvas.height - 21,
-  l: 80,
-  b: 20,
-  speed: 8,
-  dx: 0,
-};
-function drawPaddle() {
-  ctx.beginPath();
-  ctx.rect(paddle.x, paddle.y, paddle.l, paddle.b);
-  ctx.fillStyle = "#0095dd";
-  ctx.fill();
-  ctx.closePath();
-  ctx.fillStyle = "#00953d";
-}
 function drawScore() {
   ctx.font = "20px Arial";
   ctx.fillText(`Score : ${score}`, canvas.width - 100, 30);
 }
+function drawLives() {
+  ctx.font = "20px Arial";
+  ctx.fillText(`Lifes : ${life}`, 20, 30);
+}
+
+let ball = new Ball();
+let paddle = new Paddle();
 
 // let cols = Math.floor(canvas.width / brickLength);
 // let rcol = Math.ceil(((cols + 1) * gap + xoff) / brickLength);
@@ -52,7 +28,7 @@ function drawScore() {
 // cols -= rcol;
 // rows -= rrow;
 let cols = 9;
-let rows = 5
+let rows = 5;
 for (let i = 0; i < rows; i++) {
   for (let j = 0; j < cols; j++) {
     bricks.push(
@@ -61,20 +37,54 @@ for (let i = 0; i < rows; i++) {
   }
 }
 function drawBricks() {
-  for (let i = 0; i < bricks.length; i++) {
-    ctx.beginPath();
-    ctx.rect(bricks[i].x, bricks[i].y, brickLength, brickWidth);
-    ctx.fillStyle = bricks[i].visible?"#0095dd":"transparent";
-    ctx.fill();
-    ctx.closePath();
-    ctx.fillStyle = "#00953d";
+  for (let brick of bricks) {
+    brick.draw();
+  }
+}
+function checkBricks() {
+  for (let brick of bricks) {
+    brick.check(ball);
+  }
+}
+function showAllBricks() {
+  for (let brick of bricks) {
+    brick.visible = true;
   }
 }
 
-function draw() {
+function keyDown(e) {
+  if (e.key == "ArrowRight" || e.key == "Right") {
+    paddle.moveRight();
+  }
+  if (e.key == "ArrowLeft" || e.key == "Left") {
+    paddle.moveLeft();
+  }
+}
+function keyUp(e) {
+  paddle.stop();
+}
+document.addEventListener("keyup", keyUp);
+document.addEventListener("keydown", keyDown);
+function drawPaddle() {
+  paddle.draw();
+  paddle.update();
+  paddle.check(ball);
+}
+function drawBall() {
+  ball.draw();
+  ball.move();
+  ball.collision();
+}
+//Draw and update
+
+function update() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawScore();
+  drawLives();
   drawPaddle();
   drawBall();
-  drawScore();
   drawBricks();
+  checkBricks();
+  requestAnimationFrame(update);
 }
-draw();
+update();
