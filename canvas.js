@@ -10,11 +10,11 @@ let gap = 10;
 let life = 3;
 
 function drawScore() {
-  ctx.font = "20px Arial";
-  ctx.fillText(`Score : ${score}`, canvas.width - 100, 30);
+  ctx.font = "20px Iosevka";
+  ctx.fillText(`Score : ${score}`, canvas.width - 110, 30);
 }
 function drawLives() {
-  ctx.font = "20px Arial";
+  ctx.font = "20px Iosevka";
   ctx.fillText(`Lifes : ${life}`, 20, 30);
 }
 
